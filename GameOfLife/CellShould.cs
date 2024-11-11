@@ -25,16 +25,16 @@ using FluentAssertions;
  */
 namespace GameOfLife;
 
-public class CellShould
+public class CellAliveShould
 {
     [Theory(DisplayName = "be dead when it has less than two neighbours")]
-    [InlineData(0, false)]
-    [InlineData(1, false)]
+    [InlineData(0, true)]
+    [InlineData(1, true)]
     public void be_dead_when_it_has_less_than_two_neighbours(int neighbours, bool state)
     {
         var cell = new Cell(neighbours, state);
 
-        cell.Change();
+        cell.ChangeBehaviour();
 
         cell.State.Should().BeFalse();
     }
@@ -46,24 +46,37 @@ public class CellShould
     {
         var cell = new Cell(neighbours, state);
 
-        cell.Change();
+        cell.ChangeBehaviour();
 
         cell.State.Should().BeTrue();
     }
     
     [Theory(DisplayName = "be dead when it has more than three neighbours")]
-    [InlineData(4, false)]
-    [InlineData(5, false)]
-    [InlineData(6, false)]
-    [InlineData(7, false)]
-    [InlineData(8, false)]
+    [InlineData(4, true)]
+    [InlineData(5, true)]
+    [InlineData(6, true)]
+    [InlineData(7, true)]
+    [InlineData(8, true)]
     public void be_dead_when_it_has_more_than_three_neighbours(int neighbours, bool state)
     {
         var cell = new Cell(neighbours, state);
 
-        cell.Change();
+        cell.ChangeBehaviour();
 
         cell.State.Should().BeFalse();
+    }
+}
+
+public class CellDeadShould
+{
+    [Fact(DisplayName = "be alive when it has 3 neighbours")]
+    public void be_alive_when_it_has_3_neighbours()
+    {
+        var cell = new Cell(3, false);
+
+        cell.ChangeBehaviour();
+
+        cell.State.Should().BeTrue();
     }
 }
 
@@ -78,9 +91,18 @@ public class Cell
         State = state;
     }
 
-    public void Change()
+    public void ChangeBehaviour()
     {
-        if (this.Neighbours < 2 || this.Neighbours > 3) this.State = false;
+        if (this.State == true)
+        {
+            if (this.Neighbours is < 2 or > 3)
+            {
+                this.State = false;
+            }
+        }
+        else if (this.Neighbours == 3)
+        {
+            this.State = true;
+        }
     }
 }
-
