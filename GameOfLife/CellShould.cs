@@ -2,7 +2,7 @@ using FluentAssertions;
 
 namespace GameOfLife;
 
-public class CellSould
+public class CellShould
 {
     [Fact(DisplayName = "be dead when it has less than two neighbours")]
     public void be_dead_when_it_has_less_than_two_neighbours()
@@ -18,7 +18,7 @@ public class CellSould
 public class Cell
 {
     public int Neighbours { get; }
-    public bool State { get; }
+    public bool State { get; set; }
 
     public Cell(int neighbours, bool state)
     {
@@ -28,7 +28,10 @@ public class Cell
 
     public void Change()
     {
-        
+        if (this.Neighbours < 2)
+        {
+            this.State = false;
+        }
     }
 }
 
