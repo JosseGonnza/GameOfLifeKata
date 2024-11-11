@@ -32,9 +32,9 @@ public class CellAliveShould
     [InlineData(1, true)]
     public void be_dead_when_it_has_less_than_two_neighbours(int neighbours, bool state)
     {
-        var cell = new Cell(neighbours, state);
+        var cell = new Cell(neighbours, CellState.IsAlive);
 
-        cell.ChangeBehaviour();
+        cell.NextGen();
 
         cell.State.Should().BeFalse();
     }
@@ -46,7 +46,7 @@ public class CellAliveShould
     {
         var cell = new Cell(neighbours, state);
 
-        cell.ChangeBehaviour();
+        cell.NextGen();
 
         cell.State.Should().BeTrue();
     }
@@ -61,7 +61,7 @@ public class CellAliveShould
     {
         var cell = new Cell(neighbours, state);
 
-        cell.ChangeBehaviour();
+        cell.NextGen();
 
         cell.State.Should().BeFalse();
     }
@@ -74,7 +74,7 @@ public class CellDeadShould
     {
         var cell = new Cell(3, false);
 
-        cell.ChangeBehaviour();
+        cell.NextGen();
 
         cell.State.Should().BeTrue();
     }
@@ -83,17 +83,17 @@ public class CellDeadShould
 public class Cell
 {
     public int Neighbours { get; }
-    public bool State { get; set; }
+    public CellState State { get; set; }
 
-    public Cell(int neighbours, bool state)
+    public Cell(int neighbours, CellState state)
     {
         Neighbours = neighbours;
         State = state;
     }
 
-    public void ChangeBehaviour()
+    public void NextGen()
     {
-        if (this.State == true)
+        if (this.State.GetState() == true)
         {
             if (this.Neighbours is < 2 or > 3)
             {
@@ -105,4 +105,23 @@ public class Cell
             this.State = true;
         }
     }
+}
+
+public class CellState
+{
+    private readonly bool _value;
+
+    private CellState(bool value)
+    {
+        _value = value;
+    }
+
+    public static CellState IsAlive { get; } = new CellState(true);
+    public static CellState IsDead { get; } = new CellState(false);
+
+    public bool GetState()
+    {
+        return _value;
+    }
+
 }
